@@ -8,4 +8,4 @@ n.on('remove',function(meta){
   console.log('C-REMOVE',meta)
 })
 
-n.join({name:'0'},console.log)
+n.join({name:'0'})

@@ -4,7 +4,8 @@
   "description": "sneeze",
   "main": "sneeze.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "lab -P test -t ",
+    "test-cov-html": "lab -P test -r html -o coverage.html"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,9 @@
   "dependencies": {
     "lodash": "^4.0.0",
     "swim": "https://github.com/rjrodger/swim-js"
+  },
+  "devDependencies": {
+    "code": "^2.1.0",
+    "lab": "^8.2.0"
   }
 }

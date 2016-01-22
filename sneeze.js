@@ -21,37 +21,39 @@ function Sneeze (options) {
   Events.EventEmitter.call(this)
   var self = this
 
-  // merge default options with any provided by the caller
   options = _.defaultsDeep(options,{
+    base: false,
     host: '127.0.0.1',
-    remotes: ['127.0.0.1:39999']
+    remotes: ['127.0.0.1:39999'],
+    retry_min: 111,
+    retry_max: 222,
+    silent: false
   })
 
-  // become a base node
   if( options.base ) {
-    options.host = '127.0.0.1'
     options.port = 39999
   }
   else {
-    if( !options.port ) {
-      options.port = function() {
-        return 40000 + Math.floor((10000*Math.random()))
-      }
+    options.port = options.port || function() {
+      return 40000 + Math.floor((10000*Math.random()))
     }
   }
 
+  var swim
 
-  this.join = function( meta, done ) {
+
+  this.join = function( meta ) {
+    meta = meta || {}
 
     var attempts = 0, max_attempts = 11
 
     function join() {
-      var host = options.host + ( options.port ? 
-                                  ':'+(_.isFunction(options.port) ? 
-                                       options.port() : options.port ) : '' )
+      var port = ':' + (_.isFunction(options.port) ? options.port() : options.port )
+      var host = options.host + port
       var incarnation = Date.now()
 
-      var identifier = host+'~'+incarnation+'~'+Math.random()
+      meta.identifier = null == meta.identifier ? 
+        host+'~'+incarnation+'~'+Math.random() : meta.identifier
 
       var swim_opts = _.defaultsDeep(options.swim,{
         codec: 'msgpack',
@@ -68,10 +70,14 @@ function Sneeze (options) {
         host: host,
         meta: meta,
         incarnation: incarnation,
-        identifier: identifier
       }
 
-      var swim = new Swim(swim_opts)
+      var remotes = _.compact(_.clone(options.remotes))
+      if( options.base ) {
+        _.remove(remotes,function(r) { return r === '127.0.0.1:39999' })
+      }
+
+      swim = new Swim(swim_opts)
 
       swim.on(Swim.EventType.Error, function(err) {
         if ('EADDRINUSE' === err.code && attempts < max_attempts) {
@@ -80,36 +86,23 @@ function Sneeze (options) {
             function() {
               join()
             }, 
-            100 + Math.floor(Math.random() * 222)
+            options.retry_min + 
+              Math.floor(Math.random() * (options.retry_max-options.retry_min))
           )
           return
         }
         else if( err ) {
-          // TODO: duplicate call
-          return done(err)
+          self.emit('error',err)
         }
       })
 
-
-      // TODO: this is not being called!
-      swim.on(Swim.EventType.Ready, function(){
-        done( null, config )
-      })
-
-      var remotes = _.compact(options.remotes)
-
       swim.bootstrap( remotes, function onBootstrap(err) {
         if (err) {
-          console.log(err)
+          self.emit('error',err)
           return
         }
 
         _.each( swim.members(), updateinfo )
-
-        swim.on(Swim.EventType.Change, function onChange(info) {
-          // TODO: not used
-          //updateinfo(info)
-        })
 
         swim.on(Swim.EventType.Update, function onUpdate(info) {
           updateinfo(info)
@@ -117,17 +110,17 @@ function Sneeze (options) {
         
       })
 
-
       function updateinfo( m ) {
-        // Ignore updates about myself
-        if( m.meta.identifier === identifier ) {
+        if( m.meta.identifier === meta.identifier ) {
           return
         }
-        
+
         if( 0 === m.state ) {
           add_node( m.meta )
         }
-        else {
+
+        // Note: trigger happy
+        else if( 2 === m.state ) {
           remove_node( m.meta )
         }
       }
@@ -135,6 +128,12 @@ function Sneeze (options) {
 
     join()
   }
+
+  
+  self.leave = function() {
+    swim && swim.leave()
+  }
+
 
   function add_node( meta ) {
     self.emit('add',meta)
@@ -144,5 +143,10 @@ function Sneeze (options) {
     self.emit('remove',meta)
   }
 
+  if( !options.silent ) {
+    self.on('error',function(err){
+      console.log('SNEEZE-ERROR',err)
+    })
+  }
 }
 Util.inherits(Sneeze, Events.EventEmitter)
