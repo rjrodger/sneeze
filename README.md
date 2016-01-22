@@ -7,7 +7,7 @@ Easily join SWIM networks. See http://www.cs.cornell.edu/~asdas/research/dsn02-S
 The *base* node serves as the well-known starting point. As other
 nodes join and leave all nodes eventually learn about them
 
-``
+```js
 // base.js - start first
 var base = require('sneeze')({base:true})
 base.join()
@@ -23,7 +23,12 @@ var nodeB = require('sneeze')()
 nodeB.on('add',console.log)
 nodeB.on('remove',console.log)
 nodeB.join({name: 'B'})
-``
+```
+
+## Questions?
+
+[@rjrodger](https://twitter.com/rjrodger)
+
 
 
 
