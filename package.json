@@ -1,0 +1,26 @@
+{
+  "name": "sneeze",
+  "version": "0.0.1",
+  "description": "sneeze",
+  "main": "sneeze.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rjrodger/sneeze.git"
+  },
+  "keywords": [
+    "sneeze"
+  ],
+  "author": "Richard Rodger richardrodger.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rjrodger/sneeze/issues"
+  },
+  "homepage": "https://github.com/rjrodger/sneeze",
+  "dependencies": {
+    "lodash": "^4.0.0",
+    "swim": "https://github.com/rjrodger/swim-js"
+  }
+}
