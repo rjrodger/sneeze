@@ -1,7 +1,7 @@
 {
   "name": "sneeze",
-  "version": "0.0.1",
-  "description": "sneeze",
+  "version": "0.1.0",
+  "description": "Easily join SWIM networks",
   "main": "sneeze.js",
   "scripts": {
     "test": "lab -P test -t ",
