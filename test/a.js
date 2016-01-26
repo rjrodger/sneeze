@@ -1,11 +1,5 @@
-var n = require('..')()
+var NAME = process.env.NAME || process.argv[2] || 'a'
+var REMOTES = (process.env.REMOTES || process.argv[3] || '').split(',')
 
-n.on('add',function(meta){
-  console.log('C-ADD',meta)
-})
-
-n.on('remove',function(meta){
-  console.log('C-REMOVE',meta)
-})
-
-n.join({name:'a'})
+var n = require('..')({remotes:REMOTES, silent:false})
+n.join({name:NAME})

@@ -20,6 +20,7 @@ module.exports = function (options) {
 function Sneeze (options) {
   Events.EventEmitter.call(this)
   var self = this
+  var tick = 0
 
   options = _.defaultsDeep(options,{
     base: false,
@@ -27,11 +28,20 @@ function Sneeze (options) {
     remotes: ['127.0.0.1:39999'],
     retry_min: 111,
     retry_max: 222,
-    silent: false
+    silent: true,
+    log: null
   })
 
+  if( !options.silent && null == options.log ) {
+    options.log = function () {
+      console.log.apply(null,_.flatten(['SNEEZE',tick,arguments]))
+    }
+  }
+
+  var log = options.log || _.noop
+
   if( options.base ) {
-    options.port = 39999
+    options.port = null == options.port ? 39999 : options.port
   }
   else {
     options.port = options.port || function() {
@@ -48,12 +58,14 @@ function Sneeze (options) {
     var attempts = 0, max_attempts = 11
 
     function join() {
-      var port = ':' + (_.isFunction(options.port) ? options.port() : options.port )
-      var host = options.host + port
+      var port = (_.isFunction(options.port) ? options.port() : options.port )
+      var host = options.host + ':' + port
       var incarnation = Date.now()
 
       meta.identifier = null == meta.identifier ? 
         host+'~'+incarnation+'~'+Math.random() : meta.identifier
+
+      log('joining',attempts,options.host,port,meta.identifier)
 
       var swim_opts = _.defaultsDeep(options.swim,{
         codec: 'msgpack',
@@ -74,7 +86,7 @@ function Sneeze (options) {
 
       var remotes = _.compact(_.clone(options.remotes))
       if( options.base ) {
-        _.remove(remotes,function(r) { return r === '127.0.0.1:39999' })
+        _.remove(remotes,function(r) { return r === host })
       }
 
       swim = new Swim(swim_opts)
@@ -97,17 +109,19 @@ function Sneeze (options) {
       })
 
       swim.bootstrap( remotes, function onBootstrap(err) {
-        if (err) {
-          self.emit('error',err)
-          return
-        }
-
         _.each( swim.members(), updateinfo )
 
         swim.on(Swim.EventType.Update, function onUpdate(info) {
           updateinfo(info)
         })
-        
+
+        //swim.on(Swim.EventType.Change, function onChange(info) {
+        //  console.log('C',info)
+        //})        
+
+        if (err) {
+          self.emit('error',err)
+        }
       })
 
       function updateinfo( m ) {
@@ -136,17 +150,19 @@ function Sneeze (options) {
 
 
   function add_node( meta ) {
+    log('add',meta)
     self.emit('add',meta)
   }
 
+
   function remove_node( meta ) {
+    log('remove',meta)
     self.emit('remove',meta)
   }
 
-  if( !options.silent ) {
-    self.on('error',function(err){
-      console.log('SNEEZE-ERROR',err)
-    })
-  }
+
+  self.on('error',function(err){
+    log('ERROR',err)
+  })
 }
 Util.inherits(Sneeze, Events.EventEmitter)
