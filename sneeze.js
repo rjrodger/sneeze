@@ -16,6 +16,8 @@ module.exports = function (options) {
   return new Sneeze( options )
 }
 
+// NOTE: depends on event handling modifications in
+// https://github.com/rjrodger/swim-js
 
 function Sneeze (options) {
   Events.EventEmitter.call(this)
@@ -23,13 +25,14 @@ function Sneeze (options) {
   var tick = 0
 
   options = _.defaultsDeep(options,{
-    base: false,
+    isbase: false,
     host: '127.0.0.1',
-    remotes: ['127.0.0.1:39999'],
+    bases: ['127.0.0.1:39999'],
     retry_min: 111,
     retry_max: 222,
     silent: true,
-    log: null
+    log: null,
+    tag: null
   })
 
   if( !options.silent && null == options.log ) {
@@ -40,7 +43,7 @@ function Sneeze (options) {
 
   var log = options.log || _.noop
 
-  if( options.base ) {
+  if( options.isbase ) {
     options.port = null == options.port ? 39999 : options.port
   }
   else {
@@ -50,7 +53,7 @@ function Sneeze (options) {
   }
 
   var swim
-
+  var members = {}
 
   this.join = function( meta ) {
     meta = meta || {}
@@ -62,10 +65,12 @@ function Sneeze (options) {
       var host = options.host + ':' + port
       var incarnation = Date.now()
 
-      meta.identifier = null == meta.identifier ? 
-        host+'~'+incarnation+'~'+Math.random() : meta.identifier
+      meta.identifier$ = null == meta.identifier$ ? 
+        host+'~'+incarnation+'~'+Math.random() : meta.identifier$
 
-      log('joining',attempts,options.host,port,meta.identifier)
+      meta.tag$ = options.tag
+
+      log('joining',attempts,options.host,port,meta.identifier$,meta.tag$)
 
       var swim_opts = _.defaultsDeep(options.swim,{
         codec: 'msgpack',
@@ -84,9 +89,9 @@ function Sneeze (options) {
         incarnation: incarnation,
       }
 
-      var remotes = _.compact(_.clone(options.remotes))
-      if( options.base ) {
-        _.remove(remotes,function(r) { return r === host })
+      var bases = _.compact(_.clone(options.bases))
+      if( options.isbase ) {
+        _.remove(bases,function(r) { return r === host })
       }
 
       swim = new Swim(swim_opts)
@@ -94,6 +99,7 @@ function Sneeze (options) {
       swim.on(Swim.EventType.Error, function(err) {
         if ('EADDRINUSE' === err.code && attempts < max_attempts) {
           attempts++
+
           setTimeout( 
             function() {
               join()
@@ -108,39 +114,46 @@ function Sneeze (options) {
         }
       })
 
-      swim.bootstrap( remotes, function onBootstrap(err) {
+      swim.bootstrap(bases, function onBootstrap(err) {
         _.each( swim.members(), updateinfo )
 
         swim.on(Swim.EventType.Update, function onUpdate(info) {
           updateinfo(info)
         })
 
-        //swim.on(Swim.EventType.Change, function onChange(info) {
-        //  console.log('C',info)
-        //})        
-
         if (err) {
           self.emit('error',err)
         }
+
+        self.emit('ready')
       })
 
       function updateinfo( m ) {
-        if( m.meta.identifier === meta.identifier ) {
+        if( null != meta.tag$ && m.meta.tag$ !== meta.tag$ ) {
           return
         }
 
+        if( m.meta.identifier$ === meta.identifier$ ) {
+          return
+        }
+        
         if( 0 === m.state ) {
-          add_node( m.meta )
+          add_node( host, m.meta )
         }
 
         // Note: trigger happy
         else if( 2 === m.state ) {
-          remove_node( m.meta )
+          remove_node( host, m.meta )
         }
       }
     }
 
     join()
+  }
+
+
+  self.members = function() {
+    return _.clone( members )
   }
 
   
@@ -149,15 +162,17 @@ function Sneeze (options) {
   }
 
 
-  function add_node( meta ) {
-    log('add',meta)
-    self.emit('add',meta)
+  function add_node( host, meta ) {
+    log('add', meta.identifier$, meta.tag$, meta)
+    members[meta.identifier$] = meta
+    self.emit('add', meta)
   }
 
 
-  function remove_node( meta ) {
-    log('remove',meta)
-    self.emit('remove',meta)
+  function remove_node( host, meta ) {
+    log('remove', meta.identifier$, meta.tag$, meta)
+    delete members[meta.identifier$]
+    self.emit('remove', meta)
   }
 
 
