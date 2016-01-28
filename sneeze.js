@@ -70,7 +70,7 @@ function Sneeze (options) {
 
       meta.tag$ = options.tag
 
-      log('joining',attempts,options.host,port,meta.identifier$,meta.tag$)
+      log('joining',attempts,host,meta.identifier$,meta.tag$)
 
       var swim_opts = _.defaultsDeep(options.swim,{
         codec: 'msgpack',
@@ -163,14 +163,14 @@ function Sneeze (options) {
 
 
   function add_node( host, meta ) {
-    log('add', meta.identifier$, meta.tag$, meta)
+    log('add', host, meta.identifier$, meta.tag$, meta)
     members[meta.identifier$] = meta
     self.emit('add', meta)
   }
 
 
   function remove_node( host, meta ) {
-    log('remove', meta.identifier$, meta.tag$, meta)
+    log('remove', host, meta.identifier$, meta.tag$, meta)
     delete members[meta.identifier$]
     self.emit('remove', meta)
   }
