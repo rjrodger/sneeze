@@ -77,17 +77,17 @@ describe('sneeze', function () {
 
 
   it('identifier', { parallel: false }, function (done) {
-    var base = Sneeze({isbase: true})
+    var base = Sneeze({isbase: true, identifier:'0'})
     base.on('error',done)
-    base.join({name:'0',identifier$:'0'})
+    base.join({name:'0'})
 
-    var nodeA = Sneeze()
+    var nodeA = Sneeze({identifier: 'q'})
     nodeA.on('error',done)
-    nodeA.join({name:'A',identifier$:'q'})
+    nodeA.join({name:'A'})
 
-    var nodeB = Sneeze()
+    var nodeB = Sneeze({identifier: 'q'})
     nodeB.on('error',done)
-    nodeB.join({name:'B',identifier$:'q'})
+    nodeB.join({name:'B'})
 
     wait_ready( [base, nodeA, nodeB], function () {
       base.leave()
@@ -138,26 +138,26 @@ describe('sneeze', function () {
 
 
   it('tag', { parallel: false }, function (done) {
-    var base = Sneeze({isbase: true, silent: true})
+    var base = Sneeze({isbase: true, silent: true, identifier:'foo-0'})
     base.on('error',done)
-    base.join({name:'foo-0',identifier$:'foo-0'})
+    base.join({name:'foo-0'})
 
-    var nodeA_foo = Sneeze({silent: true, tag: 'foo'})
+    var nodeA_foo = Sneeze({silent: true, tag: 'foo', identifier:'foo-A'})
     nodeA_foo.on('error',done)
-    nodeA_foo.join({name:'foo-A',identifier$:'foo-A'})
+    nodeA_foo.join({name:'foo-A'})
 
-    var nodeB_foo = Sneeze({silent: true, tag: 'foo'})
+    var nodeB_foo = Sneeze({silent: true, tag: 'foo', identifier:'foo-B'})
     nodeB_foo.on('error',done)
-    nodeB_foo.join({name:'foo-B',identifier$:'foo-B'})
+    nodeB_foo.join({name:'foo-B'})
 
 
-    var nodeA_bar = Sneeze({silent: true, tag: 'bar'})
+    var nodeA_bar = Sneeze({silent: true, tag: 'bar', identifier:'bar-A'})
     nodeA_bar.on('error',done)
-    nodeA_bar.join({name:'bar-A',identifier$:'bar-A'})
+    nodeA_bar.join({name:'bar-A'})
 
-    var nodeB_bar = Sneeze({silent: true, tag: 'bar'})
+    var nodeB_bar = Sneeze({silent: true, tag: 'bar', identifier:'bar-B'})
     nodeB_bar.on('error',done)
-    nodeB_bar.join({name:'bar-B',identifier$:'bar-B'})
+    nodeB_bar.join({name:'bar-B'})
 
 
     wait_ready( [base, nodeA_foo, nodeA_bar, nodeB_foo, nodeB_bar], function () {

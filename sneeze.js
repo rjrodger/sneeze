@@ -65,8 +65,8 @@ function Sneeze (options) {
       var host = options.host + ':' + port
       var incarnation = Date.now()
 
-      meta.identifier$ = null == meta.identifier$ ? 
-        host+'~'+incarnation+'~'+Math.random() : meta.identifier$
+      meta.identifier$ = null == options.identifier ? 
+        host+'~'+incarnation+'~'+Math.random() : options.identifier
 
       meta.tag$ = options.tag
 
