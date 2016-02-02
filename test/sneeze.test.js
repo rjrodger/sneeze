@@ -185,6 +185,73 @@ describe('sneeze', function () {
       done()
     },333)
   })
+
+
+  it('multi-base', { parallel: false }, function (done) {
+    var silent = true
+    var bases = ['127.0.0.1:39000','127.0.0.1:39001']
+
+    var b0 = Sneeze({
+      isbase: true, silent: silent, identifier:'b0',
+      host:'127.0.0.1',port:39000,
+      bases:bases
+    })
+    //b0.on('error',done)
+    b0.join({name:'b0'})
+
+
+    var b1 = Sneeze({
+      isbase: true, silent: silent, identifier:'b1',
+      host:'127.0.0.1',port:39001,
+      bases:bases
+    })
+    //b1.on('error',done)
+
+    var nA = Sneeze({silent: silent, identifier:'A', bases:bases})
+    //nA.on('error',done)
+    nA.join({name:'A'})
+
+    var nB = Sneeze({silent: silent, identifier:'B', bases:[bases[1]]})
+    //nB.on('error',done)
+    nB.join({name:'B'})
+
+    var nC = Sneeze({silent: silent, identifier:'C', bases:[bases[1]]})
+    //nC.on('error',done)
+    nC.join({name:'C'})
+
+    wait_ready( [b0, nA], function () {
+      b1.join({name:'b1'})
+
+      wait_ready( [b1], function () {
+        nB.join({name:'nB'})        
+
+        wait_ready( [nB], function () {
+          expect( _.keys(b0.members()).sort() ).to.deep.equal(
+            [ 'A', 'B', 'b1' ]
+          )
+          b0.leave()          
+
+          setTimeout( function() {
+            nC.join({name:'nC'})        
+
+            wait_ready( [nC], function () {
+              expect( _.keys(nA.members()).sort() ).to.deep.equal(
+                [ 'B', 'C', 'b1' ]
+              )
+
+              b1.leave()
+              nA.leave()
+              nB.leave()
+              nC.leave()
+
+              done()
+            })
+          },333)
+        })
+      })
+    })
+  })
+
 })
 
 
