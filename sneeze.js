@@ -96,7 +96,7 @@ function Sneeze (options) {
 
       swim = new Swim(swim_opts)
 
-      swim.on(Swim.EventType.Error, function(err) {
+      swim.net.on('error', function(err) {
         if ('EADDRINUSE' === err.code && attempts < max_attempts) {
           attempts++
 
