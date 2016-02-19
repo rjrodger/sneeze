@@ -260,7 +260,7 @@ function wait_ready( nodes, done ) {
   while( node = nodes.shift() ) {
     node.on('ready',function() {
       count--
-      if( 0 === count ) done();
+      if( 0 === count ) setTimeout(done,111);
     })
   }
 }
