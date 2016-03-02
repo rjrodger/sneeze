@@ -28,6 +28,7 @@ nodeB.join({name: 'B'})
 ## Questions?
 
 [@rjrodger](https://twitter.com/rjrodger)
+[![Gitter][gitter-badge]][gitter-url]
 
 
 
