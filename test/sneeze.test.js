@@ -132,7 +132,7 @@ describe('sneeze', function () {
         nodeB.leave()
         setTimeout(done,333)
         
-      },222)
+      },333)
     })
   })
 

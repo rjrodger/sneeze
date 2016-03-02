@@ -1,10 +1,10 @@
 {
   "name": "sneeze",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Easily join SWIM networks",
   "main": "sneeze.js",
   "scripts": {
-    "test": "lab -P test -t ",
+    "test": "lab -P test -v -t",
     "test-cov-html": "lab -P test -r html -o coverage.html"
   },
   "repository": {
@@ -12,7 +12,10 @@
     "url": "https://github.com/rjrodger/sneeze.git"
   },
   "keywords": [
-    "sneeze"
+    "swim",
+    "sneeze",
+    "peer",
+    "discovery"
   ],
   "author": "Richard Rodger richardrodger.com",
   "license": "MIT",
@@ -21,7 +24,7 @@
   },
   "homepage": "https://github.com/rjrodger/sneeze",
   "dependencies": {
-    "lodash": "^4.0.0",
+    "lodash": "4.5.0",
     "swim": "0.3.0"
   },
   "devDependencies": {
