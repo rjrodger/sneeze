@@ -65,7 +65,7 @@ function Sneeze (options) {
       var host = options.host + ':' + port
       var incarnation = Date.now()
 
-      meta.identifier$ = null == options.identifier ? 
+      meta.identifier$ = null == options.identifier ?
         host+'~'+incarnation+'~'+Math.random() : options.identifier
 
       meta.tag$ = options.tag
@@ -100,11 +100,11 @@ function Sneeze (options) {
         if ('EADDRINUSE' === err.code && attempts < max_attempts) {
           attempts++
 
-          setTimeout( 
+          setTimeout(
             function() {
               join()
-            }, 
-            options.retry_min + 
+            },
+            options.retry_min +
               Math.floor(Math.random() * (options.retry_max-options.retry_min))
           )
           return
@@ -129,6 +129,10 @@ function Sneeze (options) {
       })
 
       function updateinfo( m ) {
+        if (!m.meta) {
+          return
+        }
+
         if( null != meta.tag$ && m.meta.tag$ !== meta.tag$ ) {
           return
         }
@@ -136,7 +140,7 @@ function Sneeze (options) {
         if( m.meta.identifier$ === meta.identifier$ ) {
           return
         }
-        
+
         if( 0 === m.state ) {
           add_node( host, m.meta )
         }
@@ -156,7 +160,7 @@ function Sneeze (options) {
     return _.clone( members )
   }
 
-  
+
   self.leave = function() {
     swim && swim.leave()
   }
