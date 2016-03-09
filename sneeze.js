@@ -16,9 +16,6 @@ module.exports = function (options) {
   return new Sneeze( options )
 }
 
-// NOTE: depends on event handling modifications in
-// https://github.com/rjrodger/swim-js
-
 function Sneeze (options) {
   Events.EventEmitter.call(this)
   var self = this
@@ -75,12 +72,12 @@ function Sneeze (options) {
       var swim_opts = _.defaultsDeep(options.swim,{
         codec: 'msgpack',
         disseminationFactor: 15,
-        interval: 100,
-        joinTimeout: 200,
-        pingTimeout: 20,
-        pingReqTimeout: 60,
+        interval: 88,
+        joinTimeout: 99,
+        pingTimeout: 11,
+        pingReqTimeout: 33,
         pingReqGroupSize: 3,
-        udp: {maxDgramSize: 512},
+        udp: {maxDgramSize: 8192},
       })
 
       swim_opts.local = {
