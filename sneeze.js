@@ -25,8 +25,9 @@ function Sneeze (options) {
     isbase: false,
     host: '127.0.0.1',
     bases: ['127.0.0.1:39999'],
+    retry_attempts: 22,
     retry_min: 111,
-    retry_max: 222,
+    retry_max: 555,
     silent: true,
     log: null,
     tag: null
@@ -55,14 +56,14 @@ function Sneeze (options) {
   this.join = function( meta ) {
     meta = meta || {}
 
-    var attempts = 0, max_attempts = 11
+    var attempts = 0, max_attempts = options.retry_attempts, joined = false
 
     function join() {
       var port = (_.isFunction(options.port) ? options.port() : options.port )
       var host = options.host + ':' + port
       var incarnation = Date.now()
 
-      meta.identifier$ = null == options.identifier ?
+      self.id = meta.identifier$ = null == options.identifier ?
         host+'~'+incarnation+'~'+Math.random() : options.identifier
 
       meta.tag$ = options.tag
@@ -71,13 +72,13 @@ function Sneeze (options) {
 
       var swim_opts = _.defaultsDeep(options.swim,{
         codec: 'msgpack',
-        disseminationFactor: 15,
-        interval: 88,
-        joinTimeout: 99,
-        pingTimeout: 11,
-        pingReqTimeout: 33,
-        pingReqGroupSize: 3,
-        udp: {maxDgramSize: 8192},
+        disseminationFactor: 22,
+        interval: 111,
+        joinTimeout: 777,
+        pingTimeout: 444,
+        pingReqTimeout: 333,
+        pingReqGroupSize: 7,
+        udp: {maxDgramSize: 2048},
       })
 
       swim_opts.local = {
@@ -94,33 +95,51 @@ function Sneeze (options) {
       swim = new Swim(swim_opts)
 
       swim.net.on('error', function(err) {
-        if ('EADDRINUSE' === err.code && attempts < max_attempts) {
+        if (err && !joined && attempts < max_attempts) {
           attempts++
 
-          setTimeout(
-            function() {
-              join()
-            },
-            options.retry_min +
-              Math.floor(Math.random() * (options.retry_max-options.retry_min))
-          )
+          var wait = options.retry_min +
+                Math.floor(Math.random() * (options.retry_max-options.retry_min))
+
+          setTimeout(join, wait)
           return
         }
         else if( err ) {
           self.emit('error',err)
+          return
         }
       })
 
       swim.bootstrap(bases, function onBootstrap(err) {
+        if (!options.isbase && err && !joined && attempts < max_attempts) {
+          attempts++
+
+          var wait = options.retry_min +
+                Math.floor(Math.random() * (options.retry_max-options.retry_min))
+
+          setTimeout(join, wait)
+          return
+        }
+        else if( err ) {
+          // first base node will see a JoinFailedError as there is
+          // nobody else out there
+          if( !options.isbase || 'JoinFailedError' !== err.name ) {
+            self.emit('error',err)
+            return
+          }
+        }
+
+        joined = true
+
         _.each( swim.members(), updateinfo )
 
         swim.on(Swim.EventType.Update, function onUpdate(info) {
           updateinfo(info)
         })
 
-        if (err) {
-          self.emit('error',err)
-        }
+        swim.on(Swim.EventType.Change, function onChange(info) {
+          updateinfo(info)
+        })
 
         self.emit('ready')
       })
@@ -178,7 +197,7 @@ function Sneeze (options) {
 
 
   self.on('error',function(err){
-    log('ERROR',err)
+    log('ERROR QQQ',err)
   })
 }
 Util.inherits(Sneeze, Events.EventEmitter)

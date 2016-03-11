@@ -11,7 +11,7 @@ var BASES = (process.env.BASES || process.argv[4] || '').split(',')
 
 require('..')({
   isbase: true, 
-  silent: false, 
+  silent: true, 
   port: PORT, 
   bases: BASES
 }).join({name: NAME})
