@@ -197,7 +197,7 @@ function Sneeze (options) {
 
 
   self.on('error',function(err){
-    log('ERROR QQQ',err)
+    log('ERROR',err)
   })
 }
 Util.inherits(Sneeze, Events.EventEmitter)

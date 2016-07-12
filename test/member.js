@@ -8,7 +8,7 @@
 // ...
 
 var NAME = process.env.NAME || process.argv[2] || 'm0'
-var BASES = (process.env.BASES || process.argv[3] || '127.0.0.1:39999').split(',')
+var BASES = (process.env.BASES || process.argv[3] || '127.0.0.1:39000').split(',')
 
 require('..')({
   bases: BASES, 
