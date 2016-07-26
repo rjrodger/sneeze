@@ -53,6 +53,52 @@ describe('sneeze', function () {
   })
 
 
+  it('methods', function (done) {
+    var s0 = Sneeze()
+    s0.log('vanish')
+
+    for( var i = 0; i < 22222; ++i) {
+      var p = s0.makeport()
+      expect(40000<=p && p<50000).to.equal(true)
+    }
+
+    s0.leave()
+
+    var log = []
+    var s1 = Sneeze({
+      port: 33333,
+      silent: false,
+      log: function () {
+        log.push(Array.prototype.slice.call(arguments))
+      }
+    })
+    s1.log('hello1')
+
+    expect(s1.makeport()).to.equal(33333)
+    expect(log).to.deep.equal([['hello1']])
+
+    log = []
+    var origwrite = process.stdout.write
+    process.stdout.write = function() {
+      log.push(arguments)
+    }
+    var s2 = Sneeze({
+      port: function() {
+        return 22222
+      },
+      silent: false
+    })
+    s2.log('hello2')
+    process.stdout.write = origwrite
+
+    expect(s2.makeport()).to.equal(22222)
+    expect(log[0][0]).to.contain('hello2')
+
+    done()
+  })
+
+
+
   it('collision', { parallel: false, timeout:5555  }, function (done) {
     var base = Sneeze({isbase: true})
     base.on('error',function(err){

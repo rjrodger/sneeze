@@ -12,6 +12,10 @@ var _ = require('lodash')
 var Swim = require('swim')
 
 
+var DEFAULT_HOST = module.exports.DEFAULT_HOST = '127.0.0.1'
+var DEFAULT_PORT = module.exports.DEFAULT_PORT = 39999
+
+
 module.exports = function (options) {
   return new Sneeze( options )
 }
@@ -19,47 +23,57 @@ module.exports = function (options) {
 function Sneeze (options) {
   Events.EventEmitter.call(this)
   var self = this
-  var tick = 0
 
   options = _.defaultsDeep(options,{
     isbase: false,
-    host: '127.0.0.1',
-    bases: ['127.0.0.1:39999'],
+    host: DEFAULT_HOST,
+    bases: [DEFAULT_HOST+':'+DEFAULT_PORT],
     retry_attempts: 22,
     retry_min: 111,
     retry_max: 555,
     silent: true,
     log: null,
-    tag: null
+    tag: null,
+    port: null,
+
+    // [include,exclude]
+    port_range: [40000,50000]
   })
 
-  if( !options.silent && null == options.log ) {
-    options.log = function () {
-      console.log.apply(null,_.flatten(['SNEEZE',tick,arguments]))
-    }
-  }
+  var isbase = !!options.isbase
 
-  var log = options.log || _.noop
-
-  if( options.isbase ) {
-    options.port = null == options.port ? 39999 : options.port
-  }
-  else {
-    options.port = options.port || function() {
-      return 40000 + Math.floor((10000*Math.random()))
+  self.log =
+    !!options.silent ? _.noop : 
+    _.isFunction(options.log) ? options.log : 
+    function () {
+      console.log.apply(null,_.flatten(
+        ['SNEEZE', (''+Date.now()).substring(8), arguments]))
     }
-  }
+
+  self.makeport = _.isFunction(options.port) ? options.port :
+        function() {
+          var port = parseInt(options.port)
+          var pr = options.port_range
+
+          port = !isNaN(port) ? port :
+            isbase ? DEFAULT_PORT : 
+            pr[0] + 
+            Math.floor(((pr[1]-pr[0])*Math.random()))
+
+          return port
+        }
 
   var swim
   var members = {}
 
-  this.join = function( meta ) {
+  self.join = function( meta ) {
     meta = meta || {}
 
     var attempts = 0, max_attempts = options.retry_attempts, joined = false
 
     function join() {
-      var port = (_.isFunction(options.port) ? options.port() : options.port )
+      //var port = (_.isFunction(options.port) ? options.port() : options.port )
+      var port = self.makeport()
       var host = options.host + ':' + port
       var incarnation = Date.now()
 
@@ -68,7 +82,7 @@ function Sneeze (options) {
 
       meta.tag$ = options.tag
 
-      log('joining',attempts,host,meta.identifier$,meta.tag$)
+      self.log('joining',attempts,host,meta.identifier$,meta.tag$)
 
       var swim_opts = _.defaultsDeep(options.swim,{
         codec: 'msgpack',
@@ -88,7 +102,7 @@ function Sneeze (options) {
       }
 
       var bases = _.compact(_.clone(options.bases))
-      if( options.isbase ) {
+      if( isbase ) {
         _.remove(bases,function(r) { return r === host })
       }
 
@@ -111,7 +125,7 @@ function Sneeze (options) {
       })
 
       swim.bootstrap(bases, function onBootstrap(err) {
-        if (!options.isbase && err && !joined && attempts < max_attempts) {
+        if (!isbase && err && !joined && attempts < max_attempts) {
           attempts++
 
           var wait = options.retry_min +
@@ -123,7 +137,7 @@ function Sneeze (options) {
         else if( err ) {
           // first base node will see a JoinFailedError as there is
           // nobody else out there
-          if( !options.isbase || 'JoinFailedError' !== err.name ) {
+          if( !isbase || 'JoinFailedError' !== err.name ) {
             self.emit('error',err)
             return
           }
@@ -183,21 +197,21 @@ function Sneeze (options) {
 
 
   function add_node( host, meta ) {
-    log('add', host, meta.identifier$, meta.tag$, meta)
+    self.log('add', host, meta.identifier$, meta.tag$, meta)
     members[meta.identifier$] = meta
     self.emit('add', meta)
   }
 
 
   function remove_node( host, meta ) {
-    log('remove', host, meta.identifier$, meta.tag$, meta)
+    self.log('remove', host, meta.identifier$, meta.tag$, meta)
     delete members[meta.identifier$]
     self.emit('remove', meta)
   }
 
 
   self.on('error',function(err){
-    log('ERROR',err)
+    self.log('ERROR',err)
   })
 }
 Util.inherits(Sneeze, Events.EventEmitter)
