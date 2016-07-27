@@ -11,8 +11,8 @@ var Util = require('util')
 var _ = require('lodash')
 var Swim = require('swim')
 var Optioner = require('optioner')
-var Joi = require('joi')
 
+var Joi = Optioner.Joi
 
 var DEFAULT_HOST = module.exports.DEFAULT_HOST = '127.0.0.1'
 var DEFAULT_PORT = module.exports.DEFAULT_PORT = 39999
