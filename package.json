@@ -4,7 +4,7 @@
   "description": "Easily join SWIM networks",
   "main": "sneeze.js",
   "scripts": {
-    "test": "lab -P test -v -t 90 -r console",
+    "test": "lab -P test -v -t 90 -r console -I Reflect",
     "test-cov-html": "lab -P test -r html -o coverage.html"
   },
   "repository": {
