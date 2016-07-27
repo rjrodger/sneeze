@@ -43,24 +43,6 @@ function Sneeze (options) {
   Events.EventEmitter.call(this)
   var self = this
 
-  /*
-  options = _.defaultsDeep(options,{
-    isbase: false,
-    host: DEFAULT_HOST,
-    bases: [DEFAULT_HOST+':'+DEFAULT_PORT],
-    retry_attempts: 22,
-    retry_min: 111,
-    retry_max: 555,
-    silent: true,
-    log: null,
-    tag: null,
-    port: null,
-
-    // [include,exclude]
-    port_range: [40000,50000]
-  })
-   */
-
   optioner(options, function(err, options) {
     if (err) throw err
 
