@@ -241,7 +241,7 @@ describe('sneeze', function () {
 
     var b0 = Sneeze({
       isbase: true, silent: silent, identifier:'b0',
-      host:'127.0.0.1',port:39000,
+      host:'127.0.0.1', port:39000,
       bases:bases
     })
     //b0.on('error',done)

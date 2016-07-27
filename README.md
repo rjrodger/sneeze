@@ -1,11 +1,15 @@
 # sneeze
 
-Easily join SWIM networks. See http://www.cs.cornell.edu/~asdas/research/dsn02-SWIM.pdf.
+Easily join SWIM networks. See
+http://www.cs.cornell.edu/~asdas/research/dsn02-SWIM.pdf.
+
+This module is used by [seneca-mesh](github.com/rjrodger/seneca-mesh)
+to provide zero-configuration service discovery.
 
 ## Quick Example
 
 The *base* node serves as the well-known starting point. As other
-nodes join and leave all nodes eventually learn about them
+nodes (A and B) join and leave. All nodes eventually learn about them.
 
 ```js
 // base.js - start first
@@ -24,6 +28,9 @@ nodeB.on('add',console.log)
 nodeB.on('remove',console.log)
 nodeB.join({name: 'B'})
 ```
+
+
+
 
 ## Questions?
 

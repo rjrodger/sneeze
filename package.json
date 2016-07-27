@@ -24,7 +24,9 @@
   },
   "homepage": "https://github.com/rjrodger/sneeze",
   "dependencies": {
+    "joi": "^9.0.4",
     "lodash": "4.5.0",
+    "optioner": "0.3.0",
     "swim": "0.3.0"
   },
   "devDependencies": {
