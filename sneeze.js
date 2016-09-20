@@ -78,6 +78,12 @@ function Sneeze (options) {
       var attempts = 0, max_attempts = options.retry_attempts, joined = false
 
       function join() {
+        // if this is a retry and a previous swim instance exist, close it
+        if (swim) {
+          swim.net.removeAllListeners('error')
+          swim.leave()
+        }
+
         //var port = (_.isFunction(options.port) ? options.port() : options.port )
         var port = self.makeport()
         var host = options.host + ':' + port
