@@ -88,8 +88,6 @@ function Sneeze (options) {
 
         meta.tag$ = options.tag
 
-        self.log('joining',attempts,host,meta.identifier$,meta.tag$)
-
         var swim_opts = _.defaultsDeep(options.swim,{
           codec: 'msgpack',
           disseminationFactor: 22,
@@ -111,6 +109,9 @@ function Sneeze (options) {
         if( isbase ) {
           _.remove(bases,function(r) { return r === host })
         }
+
+
+        self.log('joining',attempts,host,meta.identifier$,meta.tag$,bases,swim_opts)
 
         swim = new Swim(swim_opts)
 
