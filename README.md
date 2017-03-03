@@ -1,8 +1,8 @@
 # sneeze
-![Npm][BadgeNpm]
-![NpmFigs][BadgeNpmFigs]
-![Travis][BadgeTravis]
-![Gitter][BadgeGitter]
+[![Npm][BadgeNpm]][Npm]
+[![NpmFigs][BadgeNpmFigs]][NpmFigs]
+[![Travis][BadgeTravis]][Travis]
+[![Gitter][BadgeGitter]][Gitter]
 
 Easily join SWIM networks. See
 http://www.cs.cornell.edu/~asdas/research/dsn02-SWIM.pdf.
@@ -267,11 +267,13 @@ Prune failed nodes from the table.
 [@rjrodger](https://twitter.com/rjrodger)
 
 
-[BadgeCoveralls]: https://coveralls.io/repos/rjrodger/sneeze/badge.svg?branch=master&service=github
 [BadgeNpm]: https://badge.fury.io/js/sneeze.svg
 [BadgeGitter]: https://badges.gitter.im/rjrodger/sneeze.svg
 [BadgeNpmFigs]: https://img.shields.io/npm/dm/sneeze.svg?maxAge=2592000
 [BadgeTravis]: https://travis-ci.org/rjrodger/sneeze.svg?branch=master
 
+[Npm]: https://www.npmjs.com/package/sneeze
+[Travis]: https://travis-ci.org/rjrodger/sneeze?branch=master
+[Gitter]: https://gitter.im/rjrodger/sneeze
 
 
