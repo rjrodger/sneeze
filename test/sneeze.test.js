@@ -19,7 +19,8 @@ const expect = Code.expect
 describe('sneeze', function () {
 
   it('happy', { parallel: false, timeout:5555 }, function (done) {
-    var log = [], append = function(tag){ return function(arg) {
+    var log = []
+    var append = function(tag){ return function(arg) {
       log.push(tag+'~'+arg.name)
     }}
 
@@ -42,7 +43,7 @@ describe('sneeze', function () {
     nodeB.join({name:'B'})
     
     wait_ready( [base, nodeA, nodeB], function () {
-      expect(log).to.deep.equal(
+      expect(log).to.equal(
         [ 'a0~A', 'a0~B', 'aA~0', 'aA~B', 'aB~A', 'aB~0' ])
 
       base.leave()
@@ -75,7 +76,7 @@ describe('sneeze', function () {
     s1.log('hello1')
 
     expect(s1.makeport()).to.equal(33333)
-    expect(log).to.deep.equal([['hello1']])
+    expect(log).to.equal([['hello1']])
 
     log = []
     var origwrite = process.stdout.write
@@ -209,19 +210,19 @@ describe('sneeze', function () {
 
 
     wait_ready( [base, nodeA_foo, nodeA_bar, nodeB_foo, nodeB_bar], function () {
-      expect( _.keys(base.members()).sort() ).to.deep.equal([
+      expect( _.keys(base.members()).sort() ).to.equal([
         'bar-A', 'bar-B', 'foo-A', 'foo-B'
       ])
-      expect( _.keys(nodeA_foo.members()).sort() ).to.deep.equal([
+      expect( _.keys(nodeA_foo.members()).sort() ).to.equal([
         'foo-B'
       ])
-      expect( _.keys(nodeB_foo.members()).sort() ).to.deep.equal([
+      expect( _.keys(nodeB_foo.members()).sort() ).to.equal([
         'foo-A'
       ])
-      expect( _.keys(nodeA_bar.members()).sort() ).to.deep.equal([
+      expect( _.keys(nodeA_bar.members()).sort() ).to.equal([
         'bar-B'
       ])
-      expect( _.keys(nodeB_bar.members()).sort() ).to.deep.equal([
+      expect( _.keys(nodeB_bar.members()).sort() ).to.equal([
         'bar-A'
       ])
 
@@ -296,6 +297,45 @@ describe('sneeze', function () {
       })
     })
   })
+
+  
+  it('edges', { parallel: false, timeout:7777 }, function (done) {
+    try {
+      Sneeze({silent:'qqq'})
+      done(new Error('optioner should fail'))
+    }
+    catch(e) {}
+
+    
+    var orphan = Sneeze({retry_attempts: 3, retry_max: 112}).join()
+
+    setTimeout(function() {
+      expect(orphan.info).to.equal(void 0)
+      done()
+    }, 555)
+  })
+
+
+  it('monitor', { parallel: false, timeout:7777 }, function (done) {
+    var base = Sneeze({isbase: true, v:1}).join({foo:'bar'})
+    var monitor = Sneeze({monitor:{active:true, meta:['foo']}, v:2}).join()
+
+    setTimeout(function () {
+      expect(base.info).to.exist()
+      expect(base.info.local.meta.v$).to.equal(1)
+
+      expect(monitor.info).to.exist()
+      expect(monitor.info.local.meta.v$).to.equal(2)
+
+      base.leave()
+
+      setTimeout(function () {
+        monitor.leave()
+        done()
+      }, 222)
+    }, 999)
+  })
+
 })
 
 
