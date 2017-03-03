@@ -3,7 +3,7 @@
 Easily join SWIM networks. See
 http://www.cs.cornell.edu/~asdas/research/dsn02-SWIM.pdf.
 
-This module is used by [seneca-mesh](github.com/rjrodger/seneca-mesh)
+This module is used by [seneca-mesh](https://github.com/rjrodger/seneca-mesh)
 to provide zero-configuration service discovery.
 
 ## Quick Example
