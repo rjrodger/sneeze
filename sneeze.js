@@ -350,9 +350,9 @@ function make_monitor (sneeze, options) {
   var head = Chalk.bold
 
   function render () {
-    var size_host = 0
-    var size_meta = 0
-    var size_tag = 0
+    var size_host = 4
+    var size_meta = 4
+    var size_tag = 3
 
     sortedmembers.forEach(function (m) {
       size_host = Math.max(size_host,m.host.length)
@@ -386,7 +386,7 @@ function make_monitor (sneeze, options) {
         Pad(2,''+(states[m.state]||'U')),
         Pad(8,''+(m.when-start)),
         Pad(m.tag||'',size_tag),
-        Pad(m.meta,size_meta),
+        Pad(m.meta||'',size_meta),
         m.id
       ]
       

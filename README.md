@@ -1,8 +1,8 @@
 # sneeze
 [![Npm][BadgeNpm]][Npm]
-[![NpmFigs][BadgeNpmFigs]][NpmFigs]
 [![Travis][BadgeTravis]][Travis]
 [![Gitter][BadgeGitter]][Gitter]
+![NpmFigs][BadgeNpmFigs]
 
 Easily join SWIM networks. See
 http://www.cs.cornell.edu/~asdas/research/dsn02-SWIM.pdf.
@@ -92,6 +92,13 @@ name inconsistency. This is common problem with overlay networks that provide lo
 Sneeze assumes a flat network structure. Everybody is on the same
 network, and can reach everybody else.
 
+
+### Basic Examples
+
+The [test](github.com/rjrodger/sneeze/tree/master/test) folder
+contains some simple examples. See the comments inside the scripts.
+
+See also the more complex examples mentioned above [sneeze].
 
 
 ## API

@@ -1,6 +1,6 @@
 {
   "name": "sneeze",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "Easily join SWIM networks",
   "main": "sneeze.js",
   "scripts": {
@@ -36,5 +36,10 @@
   "devDependencies": {
     "code": "3.x.x",
     "lab": "11.x.x"
-  }
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "sneeze.js"
+  ]
 }
