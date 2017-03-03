@@ -282,5 +282,3 @@ Prune failed nodes from the table.
 [Npm]: https://www.npmjs.com/package/sneeze
 [Travis]: https://travis-ci.org/rjrodger/sneeze?branch=master
 [Gitter]: https://gitter.im/rjrodger/sneeze
-
-
