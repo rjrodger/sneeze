@@ -1,8 +1,8 @@
 # sneeze
-[![Npm][BadgeNpm]][Npm]
-[![NpmFigs][BadgeNpmFigs]][Npm]
-[![Travis][BadgeTravis]][Travis]
-[![Gitter][BadgeGitter]][Gitter]
+![Npm][BadgeNpm]
+![NpmFigs][BadgeNpmFigs]
+![Travis][BadgeTravis]
+![Gitter][BadgeGitter]
 
 Easily join SWIM networks. See
 http://www.cs.cornell.edu/~asdas/research/dsn02-SWIM.pdf.
