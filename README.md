@@ -92,7 +92,8 @@ name inconsistency. This is common problem with overlay networks that provide lo
 Sneeze assumes a flat network structure. Everybody is on the same
 network, and can reach everybody else.
 
-Using windows? Sneeze uses some native modules, so make sure to [configure msbuild](https://github.com/Microsoft/nodejs-guidelines/blob/master/windows-environment.md#compiling-native-addon-modules).
+Using windows? Sneeze uses some native modules, so make sure to
+[configure msbuild](https://github.com/Microsoft/nodejs-guidelines/blob/master/windows-environment.md#compiling-native-addon-modules).
 
 
 ### Basic Examples
