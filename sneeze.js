@@ -43,7 +43,7 @@ var optioner = Optioner({
 
   monitor: {
     active: false,
-    meta:['route','config.pin']
+    meta: ['route','config.pin']
   },
 
   v: null
