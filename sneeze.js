@@ -247,6 +247,7 @@ function Sneeze(options) {
 
     self.leave = function() {
       swim && swim.leave()
+      members = {}
       return self
     }
 
