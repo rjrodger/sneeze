@@ -153,26 +153,6 @@ function Sneeze(options) {
 
         swim = new Swim(swim_opts)
 
-        swim.net.on('error', function(err) {
-          if (err && !joined && attempts < max_attempts) {
-            attempts++
-
-            var wait =
-              options.retry_min +
-              Math.floor(
-                Math.random() * (options.retry_max - options.retry_min)
-              )
-
-            swim.net.removeAllListeners('error')
-            setTimeout(join, wait)
-            return
-          } else if (err) {
-            self.emit('error', err)
-            swim.net.removeAllListeners('error')
-            return
-          }
-        })
-
         swim.bootstrap(bases, function onBootstrap(err) {
           if (!isbase && err && !joined && attempts < max_attempts) {
             attempts++
@@ -197,6 +177,26 @@ function Sneeze(options) {
           }
 
           joined = true
+
+          swim.net.on('error', function(err) {
+            if (err && !joined && attempts < max_attempts) {
+              attempts++
+
+              var wait =
+                options.retry_min +
+                Math.floor(
+                  Math.random() * (options.retry_max - options.retry_min)
+                )
+
+              swim.net.removeAllListeners('error')
+              setTimeout(join, wait)
+              return
+            } else if (err) {
+              self.emit('error', err)
+              swim.net.removeAllListeners('error')
+              return
+            }
+          })
 
           self.info = swim_opts
 
