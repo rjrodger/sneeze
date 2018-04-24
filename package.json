@@ -31,7 +31,7 @@
     "lodash": "4.5.0",
     "optioner": "0.8.0",
     "pad": "1.1.0",
-    "swim": "git://github.com/surfdude75/swim-js.git"
+    "swim": "0.6.0"
   },
   "devDependencies": {
     "code": "3.x.x",
