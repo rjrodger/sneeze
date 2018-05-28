@@ -4,7 +4,7 @@
   "description": "Easily join SWIM networks",
   "main": "sneeze.js",
   "scripts": {
-    "test": "lab -P test -v -t 80 -r console -I Reflect",
+    "test": "lab -P test -v -t 80 -r console -I URL,URLSearchParams",
     "test-cov-html": "lab -P test -r html -o coverage.html"
   },
   "repository": {
@@ -30,7 +30,7 @@
     "keypress": "0.2",
     "lodash": "4.17",
     "optioner": "1.1",
-    "pad": "2.0",
+    "pad": "1.2",
     "swim": "0.6"
   },
   "devDependencies": {
