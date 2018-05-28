@@ -351,21 +351,3 @@ function wait_ready( nodes, done ) {
     })
   }
 }
-
-/*
-function wait_seq(seq) {
-  var index = -1
-  item()
-  
-  function item() {
-    index += 1
-    if( seq.length <= index ) return;
-
-    setTimeout(function() {
-      console.log(index)
-      seq[index]()
-      item()
-    },111*tmx)
-  }
-}
-*/
