@@ -15,6 +15,8 @@ const describe = lab.describe
 const it = lab.it
 const expect = Code.expect
 
+var tmx = parseInt(process.env.TIMEOUT_MULTIPLIER || 1, 10)
+
 
 describe('sneeze', function () {
 
@@ -344,7 +346,7 @@ function wait_ready( nodes, done ) {
   while( node = nodes.shift() ) {
     node.on('ready',function() {
       count--
-      if( 0 === count ) setTimeout(done,111);
+      if( 0 === count ) setTimeout(done,333*tmx);
     })
   }
 }
