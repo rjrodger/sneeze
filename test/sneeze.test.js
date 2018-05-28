@@ -20,7 +20,7 @@ var tmx = parseInt(process.env.TIMEOUT_MULTIPLIER || 1, 10)
 
 describe('sneeze', function () {
 
-  it('happy', { parallel: false, timeout:5555 }, function (done) {
+  it('happy', { parallel: false, timeout:5555 }, function (fin) {
     var log = []
     var append = function(tag){ return function(arg) {
       log.push(tag+'~'+arg.name)
@@ -29,32 +29,33 @@ describe('sneeze', function () {
     var base = Sneeze({isbase: true})
     base.on('add',append('a0'))
     base.on('remove',append('r0'))
-    base.on('error',done)
+    base.on('error',fin)
     base.join({name:'0'})
-
+    
     var nodeA = Sneeze({port:44444})
     nodeA.on('add',append('aA'))
     nodeA.on('remove',append('rA'))
-    nodeA.on('error',done)
+    nodeA.on('error',fin)
     nodeA.join({name:'A'})
-
+    
     var nodeB = Sneeze()
     nodeB.on('add',append('aB'))
     nodeB.on('remove',append('rB'))
-    nodeB.on('error',done)
+    nodeB.on('error',fin)
     nodeB.join({name:'B'})
     
+    
     wait_ready( [base, nodeA, nodeB], function () {
-      expect(log).to.equal(
-        [ 'a0~A', 'a0~B', 'aA~0', 'aA~B', 'aB~A', 'aB~0' ])
-
+      expect(log.sort()).to.equal(
+        [ 'a0~A', 'a0~B', 'aA~0', 'aA~B', 'aB~A', 'aB~0' ].sort())
+      
       base.leave()
       nodeA.leave()
       nodeB.leave()
-      done()
-    })      
+      fin()
+    })
   })
-
+  
 
   it('methods', function (done) {
     var s0 = Sneeze()
@@ -350,3 +351,21 @@ function wait_ready( nodes, done ) {
     })
   }
 }
+
+/*
+function wait_seq(seq) {
+  var index = -1
+  item()
+  
+  function item() {
+    index += 1
+    if( seq.length <= index ) return;
+
+    setTimeout(function() {
+      console.log(index)
+      seq[index]()
+      item()
+    },111*tmx)
+  }
+}
+*/
