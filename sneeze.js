@@ -17,18 +17,15 @@ var Pad = require('pad')
 var JP = require('jsonpath')
 var Chalk = require('chalk')
 
-
 var Joi = Optioner.Joi
 
-
-var DEFAULT_HOST = module.exports.DEFAULT_HOST = '127.0.0.1'
-var DEFAULT_PORT = module.exports.DEFAULT_PORT = 39999
-
+var DEFAULT_HOST = (module.exports.DEFAULT_HOST = '127.0.0.1')
+var DEFAULT_PORT = (module.exports.DEFAULT_PORT = 39999)
 
 var optioner = Optioner({
   isbase: false,
   host: DEFAULT_HOST,
-  bases: Joi.array().default([DEFAULT_HOST+':'+DEFAULT_PORT]),
+  bases: Joi.array().default([DEFAULT_HOST + ':' + DEFAULT_PORT]),
   retry_attempts: 22,
   retry_min: 111,
   retry_max: 555,
@@ -39,22 +36,21 @@ var optioner = Optioner({
   identifier: null,
 
   // [include,exclude]
-  port_range: [40000,50000],
+  port_range: [40000, 50000],
 
   monitor: {
     active: false,
-    meta: ['route','config.pin']
+    meta: ['route', 'config.pin']
   },
 
   v: null
 })
 
-
-module.exports = function (options) {
-  return new Sneeze( options )
+module.exports = function(options) {
+  return new Sneeze(options)
 }
 
-function Sneeze (options) {
+function Sneeze(options) {
   Events.EventEmitter.call(this)
   var self = this
 
@@ -63,37 +59,45 @@ function Sneeze (options) {
 
     var isbase = !!options.isbase
 
-    self.monitor = !!options.monitor.active ? make_monitor(self,options) : _.noop
+    self.monitor = !!options.monitor.active
+      ? make_monitor(self, options)
+      : _.noop
 
-    self.log =
-      !!options.silent ? _.noop : 
-      _.isFunction(options.log) ? options.log : 
-      function () {
-        console.log.apply(null,_.flatten(
-          ['SNEEZE', (''+Date.now()).substring(8), arguments]))
-      }
+    self.log = !!options.silent
+      ? _.noop
+      : _.isFunction(options.log)
+        ? options.log
+        : function() {
+            console.log.apply(
+              null,
+              _.flatten(['SNEEZE', ('' + Date.now()).substring(8), arguments])
+            )
+          }
 
-    self.makeport = _.isFunction(options.port) ? options.port :
-      function() {
-        var port = parseInt(options.port)
-        var pr = options.port_range
+    self.makeport = _.isFunction(options.port)
+      ? options.port
+      : function() {
+          var port = parseInt(options.port)
+          var pr = options.port_range
 
-        port = !isNaN(port) ? port :
-          isbase ? DEFAULT_PORT : 
-          pr[0] + 
-          Math.floor(((pr[1]-pr[0])*Math.random()))
+          port = !isNaN(port)
+            ? port
+            : isbase
+              ? DEFAULT_PORT
+              : pr[0] + Math.floor((pr[1] - pr[0]) * Math.random())
 
-        return port
-      }
+          return port
+        }
 
     var swim
     var members = {}
 
-
-    self.join = function( meta ) {
+    self.join = function(meta) {
       meta = meta || {}
 
-      var attempts = 0, max_attempts = options.retry_attempts, joined = false
+      var attempts = 0,
+        max_attempts = options.retry_attempts,
+        joined = false
 
       function join() {
         if (joined) {
@@ -105,13 +109,15 @@ function Sneeze (options) {
         var host = options.host + ':' + port
         var incarnation = Date.now()
 
-        self.id = meta.identifier$ = null == options.identifier ?
-          host+'~'+incarnation+'~'+Math.random() : options.identifier
+        self.id = meta.identifier$ =
+          null == options.identifier
+            ? host + '~' + incarnation + '~' + Math.random()
+            : options.identifier
 
         meta.tag$ = options.tag
         meta.v$ = options.v || 0
 
-        var swim_opts = _.defaultsDeep(options.swim,{
+        var swim_opts = _.defaultsDeep(options.swim, {
           codec: 'msgpack',
           disseminationFactor: 22,
           interval: 111,
@@ -119,59 +125,52 @@ function Sneeze (options) {
           pingTimeout: 444,
           pingReqTimeout: 333,
           pingReqGroupSize: 7,
-          udp: {maxDgramSize: 2048},
+          udp: { maxDgramSize: 2048 }
         })
 
         swim_opts.local = {
           host: host,
           meta: meta,
-          incarnation: incarnation,
+          incarnation: incarnation
         }
 
         var bases = _.compact(_.clone(options.bases))
-        if( isbase ) {
-          _.remove(bases,function(r) { return r === host })
+        if (isbase) {
+          _.remove(bases, function(r) {
+            return r === host
+          })
         }
 
-
-        self.log('joining',attempts,host,meta.identifier$,meta.tag$,bases,swim_opts)
+        self.log(
+          'joining',
+          attempts,
+          host,
+          meta.identifier$,
+          meta.tag$,
+          bases,
+          swim_opts
+        )
 
         swim = new Swim(swim_opts)
-
-        swim.net.on('error', function(err) {
-          if (err && !joined && attempts < max_attempts) {
-            attempts++
-
-            var wait = options.retry_min +
-                  Math.floor(Math.random() * (options.retry_max-options.retry_min))
-
-            swim.net.removeAllListeners('error')
-            setTimeout(join, wait)
-            return
-          }
-          else if( err ) {
-            self.emit('error',err)
-            swim.net.removeAllListeners('error')
-            return
-          }
-        })
 
         swim.bootstrap(bases, function onBootstrap(err) {
           if (!isbase && err && !joined && attempts < max_attempts) {
             attempts++
 
-            var wait = options.retry_min +
-                  Math.floor(Math.random() * (options.retry_max-options.retry_min))
+            var wait =
+              options.retry_min +
+              Math.floor(
+                Math.random() * (options.retry_max - options.retry_min)
+              )
 
             swim.net.removeAllListeners('error')
             setTimeout(join, wait)
             return
-          }
-          else if( err ) {
+          } else if (err) {
             // first base node will see a JoinFailedError as there is
             // nobody else out there
-            if( !isbase || 'JoinFailedError' !== err.name ) {
-              self.emit('error',err)
+            if (!isbase || 'JoinFailedError' !== err.name) {
+              self.emit('error', err)
               swim.net.removeAllListeners('error')
               return
             }
@@ -179,9 +178,29 @@ function Sneeze (options) {
 
           joined = true
 
+          swim.net.on('error', function(err) {
+            if (err && !joined && attempts < max_attempts) {
+              attempts++
+
+              var wait =
+                options.retry_min +
+                Math.floor(
+                  Math.random() * (options.retry_max - options.retry_min)
+                )
+
+              swim.net.removeAllListeners('error')
+              setTimeout(join, wait)
+              return
+            } else if (err) {
+              self.emit('error', err)
+              swim.net.removeAllListeners('error')
+              return
+            }
+          })
+
           self.info = swim_opts
 
-          _.each( swim.members(), updateinfo )
+          _.each(swim.members(), updateinfo)
 
           swim.on(Swim.EventType.Update, function onUpdate(info) {
             updateinfo(info)
@@ -194,29 +213,26 @@ function Sneeze (options) {
           self.emit('ready')
         })
 
-
-        function updateinfo( m ) {
+        function updateinfo(m) {
           //console.log(m)
 
           if (!m.meta) {
             return
           }
 
-          if( null != meta.tag$ && m.meta.tag$ !== meta.tag$ ) {
+          if (null != meta.tag$ && m.meta.tag$ !== meta.tag$) {
             return
           }
 
-          if( m.meta.identifier$ === meta.identifier$ ) {
+          if (m.meta.identifier$ === meta.identifier$) {
             return
           }
 
-          if( 0 === m.state ) {
-            add_node( m )
-          }
-
-          // Note: trigger happy
-          else if( 2 === m.state ) {
-            remove_node( m )
+          if (0 === m.state) {
+            add_node(m)
+          } else if (2 === m.state) {
+            // Note: trigger happy
+            remove_node(m)
           }
         }
       }
@@ -225,29 +241,27 @@ function Sneeze (options) {
       return self
     }
 
-
     self.members = function() {
-      return _.clone( members )
+      return _.clone(members)
     }
-
 
     self.leave = function() {
       swim && swim.leave()
+      members = {}
       return self
     }
 
-
-    function add_node( member ) {
+    function add_node(member) {
       var meta = member.meta
       var host = member.host
 
       var prev = members[meta.identifier$]
-      if (prev && 
-          prev.incarnation === member.incarnation &&
-          prev.host === member.host && 
-          prev.meta.v$ === meta.v$
-         ) 
-      {
+      if (
+        prev &&
+        prev.incarnation === member.incarnation &&
+        prev.host === member.host &&
+        prev.meta.v$ === meta.v$
+      ) {
         return
       }
 
@@ -256,8 +270,7 @@ function Sneeze (options) {
       self.emit('add', meta, member)
     }
 
-
-    function remove_node( member ) {
+    function remove_node(member) {
       var meta = member.meta
       var host = member.host
 
@@ -271,24 +284,19 @@ function Sneeze (options) {
       self.emit('remove', meta, member)
     }
 
-
-    self.on('error',function(err){
-      self.log('ERROR',err)
+    self.on('error', function(err) {
+      self.log('ERROR', err)
     })
-
   })
 }
 Util.inherits(Sneeze, Events.EventEmitter)
 
-
-
-function make_monitor (sneeze, options) {
-
+function make_monitor(sneeze, options) {
   var start = Date.now()
   var allmembers = {}
   var sortedmembers = []
 
-  function update (kind, member) {
+  function update(kind, member) {
     var meta = member.meta
     var host = member.host
 
@@ -299,10 +307,9 @@ function make_monitor (sneeze, options) {
       m.host = host
       m.meta = meta
       m.state = member.state
-      m.meta = parse_meta(meta,options)
+      m.meta = parse_meta(meta, options)
       m.tag = meta.tag$ || ''
-    }
-    else {
+    } else {
       m = {
         id: meta.identifier$,
         tag: meta.tag$ || '',
@@ -311,7 +318,7 @@ function make_monitor (sneeze, options) {
         state: member.state,
         add: 0,
         rem: 0,
-        meta: parse_meta(meta,options)
+        meta: parse_meta(meta, options)
       }
       m[kind] += 1
     }
@@ -319,8 +326,8 @@ function make_monitor (sneeze, options) {
     m.when = Date.now()
 
     allmembers[meta.identifier$] = m
-    
-    sortedmembers = sortedmembers.filter(function (m) {
+
+    sortedmembers = sortedmembers.filter(function(m) {
       return m.id != meta.identifier$
     })
 
@@ -329,67 +336,71 @@ function make_monitor (sneeze, options) {
     //console.log(allmembers)
   }
 
-
-  sneeze.on('add', function (meta, member) {
+  sneeze.on('add', function(meta, member) {
     update('add', member)
     //console.log('add',member)
     render()
   })
 
-  sneeze.on('remove', function (meta, member) {
+  sneeze.on('remove', function(meta, member) {
     update('rem', member)
     //console.log('rem',member.meta)
     render()
   })
 
-
   var w = process.stdout.write.bind(process.stdout)
   var states = {
-    0: 'A', 1: 'S', 2: 'F'
+    0: 'A',
+    1: 'S',
+    2: 'F'
   }
   var head = Chalk.bold
 
-  function render () {
+  function render() {
     var size_host = 4
     var size_meta = 4
     var size_tag = 3
 
-    sortedmembers.forEach(function (m) {
-      size_host = Math.max(size_host,m.host.length)
-      size_meta = Math.max(size_meta,m.meta.length)
-      size_tag = Math.max(size_tag,m.tag.length)
+    sortedmembers.forEach(function(m) {
+      size_host = Math.max(size_host, m.host.length)
+      size_meta = Math.max(size_meta, m.meta.length)
+      size_tag = Math.max(size_tag, m.tag.length)
     })
 
     var nm = sortedmembers.length
 
     w(AE.clearScreen)
     w(AE.cursorHide)
-    w(AE.cursorUp(nm+2))
+    w(AE.cursorUp(nm + 2))
     w(AE.eraseDown)
 
-    console.log(head([
-      Pad('host',size_host),
-      Pad(2,'a'),
-      Pad(2,'r'),
-      Pad(2,'s'),
-      Pad(8,'time'),
-      Pad('tag',size_tag),
-      Pad('meta',size_meta),
-      'id'
-    ].join(' ')))
+    console.log(
+      head(
+        [
+          Pad('host', size_host),
+          Pad(2, 'a'),
+          Pad(2, 'r'),
+          Pad(2, 's'),
+          Pad(8, 'time'),
+          Pad('tag', size_tag),
+          Pad('meta', size_meta),
+          'id'
+        ].join(' ')
+      )
+    )
 
-    sortedmembers.forEach(function (m,i) {
+    sortedmembers.forEach(function(m, i) {
       var memline = [
-        Pad(m.host||'',size_host),
-        Pad(2,''+(m.add||0)),
-        Pad(2,''+(m.rem||0)),
-        Pad(2,''+(states[m.state]||'U')),
-        Pad(8,''+(m.when-start)),
-        Pad(m.tag||'',size_tag),
-        Pad(m.meta||'',size_meta),
+        Pad(m.host || '', size_host),
+        Pad(2, '' + (m.add || 0)),
+        Pad(2, '' + (m.rem || 0)),
+        Pad(2, '' + (states[m.state] || 'U')),
+        Pad(8, '' + (m.when - start)),
+        Pad(m.tag || '', size_tag),
+        Pad(m.meta || '', size_meta),
         m.id
       ]
-      
+
       var lt = memline.join(' ')
 
       lt = 2 === m.state ? Chalk.red(lt) : lt
@@ -398,17 +409,16 @@ function make_monitor (sneeze, options) {
     })
   }
 
-
   Keypress(process.stdin)
 
-  process.stdin.on('keypress', function (ch, key) {
+  process.stdin.on('keypress', function(ch, key) {
     if (key && key.ctrl && key.name == 'c') {
       process.exit()
     }
 
     // prune failed members
     if ('p' === ch) {
-      sortedmembers = sortedmembers.filter(function (m) {
+      sortedmembers = sortedmembers.filter(function(m) {
         if (2 === m.state) {
           delete allmembers[m.id]
           return false
@@ -423,13 +433,12 @@ function make_monitor (sneeze, options) {
   process.stdin.resume()
 }
 
-
-function parse_meta (meta, options) {
+function parse_meta(meta, options) {
   var out = []
-  options.monitor.meta.forEach(function (mf) {
-    var v = JP.value(meta,mf)
+  options.monitor.meta.forEach(function(mf) {
+    var v = JP.value(meta, mf)
     if (null != v) {
-      out.push( Util.inspect(v).replace(/\s+/g,'') )
+      out.push(Util.inspect(v).replace(/\s+/g, ''))
     }
   })
   return out.join('; ')
