@@ -1,11 +1,11 @@
 {
   "name": "sneeze",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Easily join SWIM networks",
   "main": "sneeze.js",
   "scripts": {
-    "test": "lab -P test -v -t 80 -r console -I URL,URLSearchParams",
-    "coveralls": "lab -s -P test -r lcov -I URL,URLSearchParams | coveralls",
+    "test": "lab -P test -v -t 80 -r console -I URL,URLSearchParams,BigUint64Array,BigInt64Array,BigInt",
+    "coveralls": "lab -s -P test -r lcov -I URL,URLSearchParamsBigUint64Array,BigInt64Array,BigInt | coveralls",
     "prettier": "prettier --write --no-semi --single-quote mesh.js"
   },
   "repository": {
@@ -30,7 +30,7 @@
     "jsonpath": "1.0",
     "keypress": "0.2",
     "lodash": "4.17",
-    "nid": "^0.3.2",
+    "nid": "0.3",
     "optioner": "1.1",
     "pad": "2.1",
     "swim": "0.6"
