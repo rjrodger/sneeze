@@ -5,7 +5,8 @@
   "main": "sneeze.js",
   "scripts": {
     "test": "lab -P test -v -t 80 -r console -I URL,URLSearchParams",
-    "test-cov-html": "lab -P test -r html -o coverage.html"
+    "coveralls": "lab -s -P test -r lcov -I URL,URLSearchParams | coveralls",
+    "prettier": "prettier --write --no-semi --single-quote mesh.js"
   },
   "repository": {
     "type": "git",
@@ -29,13 +30,16 @@
     "jsonpath": "1.0",
     "keypress": "0.2",
     "lodash": "4.17",
+    "nid": "^0.3.2",
     "optioner": "1.1",
-    "pad": "1.2",
+    "pad": "2.1",
     "swim": "0.6"
   },
   "devDependencies": {
     "code": "4",
-    "lab": "14"
+    "lab": "14",
+    "coveralls": "3",
+    "prettier": "1"
   },
   "files": [
     "LICENSE",

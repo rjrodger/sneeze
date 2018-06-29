@@ -1,6 +1,6 @@
 /*
   MIT License,
-  Copyright (c) 2016, Richard Rodger and other contributors.
+  Copyright (c) 2016-2018, Richard Rodger and other contributors.
 */
 
 'use strict'
@@ -16,10 +16,11 @@ var AE = require('ansi-escapes')
 var Pad = require('pad')
 var JP = require('jsonpath')
 var Chalk = require('chalk')
-
+var Nid = require('nid')
 
 var Joi = Optioner.Joi
 
+var Package = require('./package.json')
 
 var DEFAULT_HOST = module.exports.DEFAULT_HOST = '127.0.0.1'
 var DEFAULT_PORT = module.exports.DEFAULT_PORT = 39999
@@ -106,7 +107,11 @@ function Sneeze (options) {
         var incarnation = Date.now()
 
         self.id = meta.identifier$ = null == options.identifier ?
-          host+'~'+incarnation+'~'+Math.random() : options.identifier
+          host+'~'+
+          (incarnation+'~').substring(7)+
+          Nid()+'~'+
+          Package.version
+          : options.identifier
 
         meta.tag$ = options.tag
         meta.v$ = options.v || 0
@@ -114,11 +119,12 @@ function Sneeze (options) {
         var swim_opts = _.defaultsDeep(options.swim,{
           codec: 'msgpack',
           disseminationFactor: 22,
-          interval: 111,
-          joinTimeout: 777,
+          interval: 333,
+          joinTimeout: 999,
           pingTimeout: 444,
-          pingReqTimeout: 333,
+          pingReqTimeout: 555,
           pingReqGroupSize: 7,
+          suspectTimeout: 999,
           udp: {maxDgramSize: 2048},
         })
 
@@ -191,6 +197,7 @@ function Sneeze (options) {
             updateinfo(info)
           })
 
+
           self.emit('ready')
         })
 
@@ -233,6 +240,7 @@ function Sneeze (options) {
 
     self.leave = function() {
       swim && swim.leave()
+      members = {}
       return self
     }
 
@@ -419,7 +427,9 @@ function make_monitor (sneeze, options) {
     }
   })
 
-  process.stdin.setRawMode(true)
+  if (process.stdin.setRawMode){
+    process.stdin.setRawMode(true)
+  }
   process.stdin.resume()
 }
 

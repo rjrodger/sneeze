@@ -1,6 +1,7 @@
 sudo: required
 dist: trusty
 language: node_js
+
 node_js:
   - "10"
   - "8"
@@ -10,3 +11,7 @@ node_js:
 env:
   global:
     - TIMEOUT_MULTIPLIER=8
+
+after_script:
+  - npm run coveralls
+

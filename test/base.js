@@ -12,7 +12,7 @@ var BASES = (process.env.BASES || process.argv[5] || '127.0.0.1:39000').split(',
 
 require('..')({
   isbase: true, 
-  silent: false, 
+  silent: true, 
   host: HOST,
   port: PORT, 
   bases: BASES

@@ -155,7 +155,15 @@ describe('sneeze', function () {
       log.push(tag+'~'+arg.name)
     }}
 
-    var base = Sneeze({isbase: true})
+    var base = Sneeze({isbase: true,
+                       swim: {
+                         interval:55,
+                         suspectTimeout:111,
+                         pingTimeout:111,
+                         pingReqTimeout:111,
+                       }
+                      })
+    
     base.on('add',append('a0'))
     base.on('remove',append('r0'))
     base.on('error',done)
@@ -178,13 +186,14 @@ describe('sneeze', function () {
       nodeA.leave()
 
       setTimeout(function(){
+        // console.log(log)
         expect(log.length).to.equal(8)
 
         base.leave()
         nodeB.leave()
-        setTimeout(done,1111)
+        setTimeout(done,111*tmx)
         
-      },1111)
+      },999*tmx)
     })
   })
 
@@ -235,7 +244,7 @@ describe('sneeze', function () {
       nodeA_bar.leave()
       nodeB_bar.leave()
       done()
-    },333)
+    },666*tmx)
   })
 
 
@@ -295,7 +304,7 @@ describe('sneeze', function () {
 
               done()
             })
-          },333*tmx)
+          },666*tmx)
         })
       })
     })
@@ -315,7 +324,7 @@ describe('sneeze', function () {
     setTimeout(function() {
       expect(orphan.info).to.equal(void 0)
       done()
-    }, 555*tmx)
+    }, 777*tmx)
   })
 
 
@@ -336,7 +345,7 @@ describe('sneeze', function () {
         monitor.leave()
         done()
       }, 222*tmx)
-    }, 999*tmx)
+    }, 1111*tmx)
   })
 
 })
