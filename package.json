@@ -4,9 +4,13 @@
   "description": "Easily join SWIM networks",
   "main": "sneeze.js",
   "scripts": {
-    "test": "lab -P test -v -t 80 -r console -I URL,URLSearchParams,BigUint64Array,BigInt64Array,BigInt",
-    "coveralls": "lab -s -P test -r lcov -I URL,URLSearchParamsBigUint64Array,BigInt64Array,BigInt | coveralls",
-    "prettier": "prettier --write --no-semi --single-quote mesh.js"
+    "test": "lab -v -P test -t 80 -I SharedArrayBuffer,Atomics,URL,URLSearchParams,BigUint64Array,BigInt64Array,BigInt",
+    "coveralls": "lab -s test/use.test.js -r lcov | coveralls",
+    "coverage": "lab -v test/use.test.js -t 85 -r html > coverage.html",
+    "prettier": "prettier --write --no-semi --single-quote *.js lib/*.js test/*.js",
+    "clean": "rm -rf node_modules yarn.lock package-lock.json",
+    "repo-tag": "REPO_VERSION=`node -e \"console.log(require('./package').version)\"` && echo TAG: v$REPO_VERSION && git commit -a -m v$REPO_VERSION && git push && git tag v$REPO_VERSION && git push --tags;",
+    "repo-publish": "npm run prettier && npm test && npm run repo-tag && npm publish"
   },
   "repository": {
     "type": "git",
@@ -27,7 +31,7 @@
   "dependencies": {
     "ansi-escapes": "3.1",
     "chalk": "2.4",
-    "jsonpath": "1.0",
+    "jsonpath": "^1.0.0",
     "keypress": "0.2",
     "lodash": "4.17",
     "nid": "0.3",
@@ -36,10 +40,10 @@
     "swim": "0.6"
   },
   "devDependencies": {
-    "code": "4",
-    "lab": "14",
-    "coveralls": "3",
-    "prettier": "1"
+    "code": "^4.1.0",
+    "coveralls": "^3.0.2",
+    "lab": "^18.0.2",
+    "prettier": "^1.16.4"
   },
   "files": [
     "LICENSE",

@@ -12,7 +12,7 @@ const Lab = require('lab')
 
 const lab = exports.lab = Lab.script()
 const describe = lab.describe
-const it = lab.it
+const it = make_it(lab)
 const expect = Code.expect
 
 var tmx = parseInt(process.env.TIMEOUT_MULTIPLIER || 1, 10)
@@ -52,7 +52,7 @@ describe('sneeze', function () {
       base.leave()
       nodeA.leave()
       nodeB.leave()
-      fin()
+      setTimeout(fin,555*tmx)
     })
   })
   
@@ -358,5 +358,23 @@ function wait_ready( nodes, done ) {
       count--
       if( 0 === count ) setTimeout(done,333*tmx);
     })
+  }
+}
+
+
+function make_it(lab) {
+  return function it(name, opts, func) {
+    if ('function' === typeof opts) {
+      func = opts
+      opts = {}
+    }
+
+    lab.it(
+      name,
+      opts,
+      Util.promisify(function(x, fin) {
+        func(fin)
+      })
+    )
   }
 }
