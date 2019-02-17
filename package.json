@@ -29,15 +29,16 @@
   },
   "homepage": "https://github.com/rjrodger/sneeze",
   "dependencies": {
-    "ansi-escapes": "3.1",
-    "chalk": "2.4",
+    "ansi-escapes": "^3.1.0",
+    "chalk": "^2.4.2",
     "jsonpath": "^1.0.0",
-    "keypress": "0.2",
+    "keypress": "^0.2.1",
     "lodash": "4.17",
-    "nid": "0.3",
-    "optioner": "1.1",
-    "pad": "2.1",
-    "swim": "0.6"
+    "nid": "^0.3.2",
+    "optioner": "^1.1.0",
+    "pad": "^2.1.0",
+    "static-eval": "^2.0.1",
+    "swim": "^0.6.0"
   },
   "devDependencies": {
     "code": "^4.1.0",
