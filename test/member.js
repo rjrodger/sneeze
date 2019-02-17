@@ -9,11 +9,12 @@
 
 var NAME = process.env.NAME || process.argv[2] || 'm0'
 var HOST = process.env.HOST || process.argv[3] || '127.0.0.1'
-var BASES = (process.env.BASES || process.argv[4] || '127.0.0.1:39000').split(',')
+var BASES = (process.env.BASES || process.argv[4] || '127.0.0.1:39000').split(
+  ','
+)
 
 require('..')({
   bases: BASES,
-  host: HOST,  
+  host: HOST,
   silent: false
-})
-  .join({name: NAME})
+}).join({ name: NAME })
