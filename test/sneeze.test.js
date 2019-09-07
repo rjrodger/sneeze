@@ -6,8 +6,8 @@ var _ = require('lodash')
 
 var Sneeze = require('..')
 
-const Code = require('code')
-const Lab = require('lab')
+const Code = require('@hapi/code')
+const Lab = require('@hapi/lab')
 
 const lab = (exports.lab = Lab.script())
 const describe = lab.describe

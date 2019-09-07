@@ -17,7 +17,6 @@ worker.join({ name: name })
 var j = 0
 setInterval(function() {
   ++j
-
   ;(m = []), (sb = '')
   var ms = worker.members()
   _.each(ms, function(n) {

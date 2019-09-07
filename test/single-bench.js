@@ -41,7 +41,6 @@ function list_members() {
   --j
 
   var m, sb
-
   ;(m = []), (sb = '')
   _.each(nodes, function(n) {
     m.push(n.id + ':' + _.keys(n.members()).length)

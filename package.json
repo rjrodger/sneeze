@@ -1,6 +1,6 @@
 {
   "name": "sneeze",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Easily join SWIM networks",
   "main": "sneeze.js",
   "scripts": {
@@ -29,22 +29,22 @@
   },
   "homepage": "https://github.com/rjrodger/sneeze",
   "dependencies": {
-    "ansi-escapes": "^3.1.0",
+    "ansi-escapes": "^4.2.1",
     "chalk": "^2.4.2",
-    "jsonpath": "^1.0.0",
+    "jsonpath": "^1.0.2",
     "keypress": "^0.2.1",
     "lodash": "4.17",
     "nid": "^0.3.2",
-    "optioner": "^1.1.0",
-    "pad": "^2.1.0",
-    "static-eval": "^2.0.1",
+    "optioner": "^4.1.2",
+    "pad": "^3.2.0",
+    "static-eval": "^2.0.2",
     "swim": "^0.6.0"
   },
   "devDependencies": {
-    "code": "^4.1.0",
-    "coveralls": "^3.0.2",
-    "lab": "^18.0.2",
-    "prettier": "^1.16.4"
+    "@hapi/code": "^6.0.0",
+    "@hapi/lab": "^20.2.2",
+    "coveralls": "^3.0.6",
+    "prettier": "^1.18.2"
   },
   "files": [
     "LICENSE",
