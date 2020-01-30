@@ -1,6 +1,6 @@
 {
   "name": "sneeze",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "Easily join SWIM networks",
   "main": "sneeze.js",
   "scripts": {
@@ -8,6 +8,7 @@
     "coveralls": "lab -s test/use.test.js -r lcov | coveralls",
     "coverage": "lab -v test/use.test.js -t 85 -r html > coverage.html",
     "prettier": "prettier --write --no-semi --single-quote *.js lib/*.js test/*.js",
+    "reset": "npm run clean && npm i && npm test",
     "clean": "rm -rf node_modules yarn.lock package-lock.json",
     "repo-tag": "REPO_VERSION=`node -e \"console.log(require('./package').version)\"` && echo TAG: v$REPO_VERSION && git commit -a -m v$REPO_VERSION && git push && git tag v$REPO_VERSION && git push --tags;",
     "repo-publish": "npm run prettier && npm test && npm run repo-tag && npm publish --access public --registry=http://registry.npmjs.org"
@@ -29,22 +30,22 @@
   },
   "homepage": "https://github.com/rjrodger/sneeze",
   "dependencies": {
-    "ansi-escapes": "^4.2.1",
+    "ansi-escapes": "^4.3.0",
     "chalk": "^2.4.2",
     "jsonpath": "^1.0.2",
     "keypress": "^0.2.1",
     "lodash": "4.17",
     "nid": "^0.3.2",
-    "optioner": "^4.1.2",
+    "optioner": "^5.0.0",
     "pad": "^3.2.0",
-    "static-eval": "^2.0.2",
+    "static-eval": "^2.0.3",
     "swim": "^0.6.0"
   },
   "devDependencies": {
-    "@hapi/code": "^6.0.0",
-    "@hapi/lab": "^20.2.2",
-    "coveralls": "^3.0.6",
-    "prettier": "^1.18.2"
+    "@hapi/code": "^8.0.1",
+    "@hapi/lab": "^22.0.3",
+    "coveralls": "^3.0.9",
+    "prettier": "^1.19.1"
   },
   "files": [
     "LICENSE",
