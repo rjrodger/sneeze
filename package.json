@@ -30,22 +30,22 @@
   },
   "homepage": "https://github.com/rjrodger/sneeze",
   "dependencies": {
-    "ansi-escapes": "^4.3.0",
-    "chalk": "^2.4.2",
+    "ansi-escapes": "^4.3.1",
+    "chalk": "^4.0.0",
     "jsonpath": "^1.0.2",
     "keypress": "^0.2.1",
     "lodash": "4.17",
-    "nid": "^0.3.2",
-    "optioner": "^5.0.0",
+    "nid": "^1.1.0",
+    "optioner": "^5.0.1",
     "pad": "^3.2.0",
-    "static-eval": "^2.0.3",
+    "static-eval": "^2.0.5",
     "swim": "^0.6.0"
   },
   "devDependencies": {
     "@hapi/code": "^8.0.1",
-    "@hapi/lab": "^22.0.3",
-    "coveralls": "^3.0.9",
-    "prettier": "^1.19.1"
+    "@hapi/lab": "^22.0.4",
+    "coveralls": "^3.1.0",
+    "prettier": "^2.0.5"
   },
   "files": [
     "LICENSE",
