@@ -43,13 +43,13 @@ var optioner = Optioner({
 
   monitor: {
     active: false,
-    meta: ['route', 'config.pin']
+    meta: ['route', 'config.pin'],
   },
 
-  v: null
+  v: null,
 })
 
-module.exports = function(options) {
+module.exports = function (options) {
   return new Sneeze(options)
 }
 
@@ -57,7 +57,7 @@ function Sneeze(options) {
   Events.EventEmitter.call(this)
   var self = this
 
-  optioner(options, function(err, options) {
+  optioner(options, function (err, options) {
     if (err) throw err
 
     var isbase = !!options.isbase
@@ -70,7 +70,7 @@ function Sneeze(options) {
       ? _.noop
       : _.isFunction(options.log)
       ? options.log
-      : function() {
+      : function () {
           console.log.apply(
             null,
             _.flatten(['SNEEZE', ('' + Date.now()).substring(8), arguments])
@@ -79,7 +79,7 @@ function Sneeze(options) {
 
     self.makeport = _.isFunction(options.port)
       ? options.port
-      : function() {
+      : function () {
           var port = parseInt(options.port)
           var pr = options.port_range
 
@@ -95,7 +95,7 @@ function Sneeze(options) {
     var swim
     var members = {}
 
-    self.join = function(meta) {
+    self.join = function (meta) {
       meta = meta || {}
 
       var attempts = 0,
@@ -134,18 +134,18 @@ function Sneeze(options) {
           pingReqTimeout: 555,
           pingReqGroupSize: 7,
           suspectTimeout: 999,
-          udp: { maxDgramSize: 2048 }
+          udp: { maxDgramSize: 2048 },
         })
 
         swim_opts.local = {
           host: host,
           meta: meta,
-          incarnation: incarnation
+          incarnation: incarnation,
         }
 
         var bases = _.compact(_.clone(options.bases))
         if (isbase) {
-          _.remove(bases, function(r) {
+          _.remove(bases, function (r) {
             return r === host
           })
         }
@@ -162,7 +162,7 @@ function Sneeze(options) {
 
         swim = new Swim(swim_opts)
 
-        swim.net.on('error', function(err) {
+        swim.net.on('error', function (err) {
           if (err && !joined && attempts < max_attempts) {
             attempts++
 
@@ -252,11 +252,11 @@ function Sneeze(options) {
       return self
     }
 
-    self.members = function() {
+    self.members = function () {
       return _.clone(members)
     }
 
-    self.leave = function() {
+    self.leave = function () {
       swim && swim.leave()
       members = {}
       return self
@@ -295,7 +295,7 @@ function Sneeze(options) {
       self.emit('remove', meta, member)
     }
 
-    self.on('error', function(err) {
+    self.on('error', function (err) {
       self.log('ERROR', err)
     })
   })
@@ -329,7 +329,7 @@ function make_monitor(sneeze, options) {
         state: member.state,
         add: 0,
         rem: 0,
-        meta: parse_meta(meta, options)
+        meta: parse_meta(meta, options),
       }
       m[kind] += 1
     }
@@ -338,7 +338,7 @@ function make_monitor(sneeze, options) {
 
     allmembers[meta.identifier$] = m
 
-    sortedmembers = sortedmembers.filter(function(m) {
+    sortedmembers = sortedmembers.filter(function (m) {
       return m.id != meta.identifier$
     })
 
@@ -347,13 +347,13 @@ function make_monitor(sneeze, options) {
     //console.log(allmembers)
   }
 
-  sneeze.on('add', function(meta, member) {
+  sneeze.on('add', function (meta, member) {
     update('add', member)
     //console.log('add',member)
     render()
   })
 
-  sneeze.on('remove', function(meta, member) {
+  sneeze.on('remove', function (meta, member) {
     update('rem', member)
     //console.log('rem',member.meta)
     render()
@@ -363,7 +363,7 @@ function make_monitor(sneeze, options) {
   var states = {
     0: 'A',
     1: 'S',
-    2: 'F'
+    2: 'F',
   }
   var head = Chalk.bold
 
@@ -372,7 +372,7 @@ function make_monitor(sneeze, options) {
     var size_meta = 4
     var size_tag = 3
 
-    sortedmembers.forEach(function(m) {
+    sortedmembers.forEach(function (m) {
       size_host = Math.max(size_host, m.host.length)
       size_meta = Math.max(size_meta, m.meta.length)
       size_tag = Math.max(size_tag, m.tag.length)
@@ -395,12 +395,12 @@ function make_monitor(sneeze, options) {
           Pad(8, 'time'),
           Pad('tag', size_tag),
           Pad('meta', size_meta),
-          'id'
+          'id',
         ].join(' ')
       )
     )
 
-    sortedmembers.forEach(function(m, i) {
+    sortedmembers.forEach(function (m, i) {
       var memline = [
         Pad(m.host || '', size_host),
         Pad(2, '' + (m.add || 0)),
@@ -409,7 +409,7 @@ function make_monitor(sneeze, options) {
         Pad(8, '' + (m.when - start)),
         Pad(m.tag || '', size_tag),
         Pad(m.meta || '', size_meta),
-        m.id
+        m.id,
       ]
 
       var lt = memline.join(' ')
@@ -422,14 +422,14 @@ function make_monitor(sneeze, options) {
 
   Keypress(process.stdin)
 
-  process.stdin.on('keypress', function(ch, key) {
+  process.stdin.on('keypress', function (ch, key) {
     if (key && key.ctrl && key.name == 'c') {
       process.exit()
     }
 
     // prune failed members
     if ('p' === ch) {
-      sortedmembers = sortedmembers.filter(function(m) {
+      sortedmembers = sortedmembers.filter(function (m) {
         if (2 === m.state) {
           delete allmembers[m.id]
           return false
@@ -448,7 +448,7 @@ function make_monitor(sneeze, options) {
 
 function parse_meta(meta, options) {
   var out = []
-  options.monitor.meta.forEach(function(mf) {
+  options.monitor.meta.forEach(function (mf) {
     var v = JP.value(meta, mf)
     if (null != v) {
       out.push(Util.inspect(v).replace(/\s+/g, ''))

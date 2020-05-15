@@ -12,6 +12,6 @@ require('..')({
   silent: true,
   monitor: {
     active: true,
-    meta: ['name']
-  }
+    meta: ['name'],
+  },
 }).join()

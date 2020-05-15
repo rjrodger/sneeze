@@ -11,7 +11,7 @@ var b0 = Sneeze({
   identifier: 'b0',
   host: '127.0.0.1',
   port: 39000,
-  bases: bases
+  bases: bases,
 })
 //b0.on('error',done)
 b0.join({ name: 'b0' })
@@ -42,7 +42,7 @@ function list_members() {
 
   var m, sb
   ;(m = []), (sb = '')
-  _.each(nodes, function(n) {
+  _.each(nodes, function (n) {
     m.push(n.id + ':' + _.keys(n.members()).length)
   })
   sb = j + ' --- ' + m.join(',')
@@ -51,7 +51,7 @@ function list_members() {
   var mn = Math.floor(i / 2)
   ;(m = []), (sb = '')
   var n2m = nodes[mn].members()
-  _.each(n2m, function(n) {
+  _.each(n2m, function (n) {
     //m.push( n.id+':'+_.keys(n.members()).length )
     //m.push(Util.inspect(n))
     m.push(n.name)

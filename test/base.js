@@ -17,5 +17,5 @@ require('..')({
   silent: true,
   host: HOST,
   port: PORT,
-  bases: BASES
+  bases: BASES,
 }).join({ name: NAME })

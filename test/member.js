@@ -16,5 +16,5 @@ var BASES = (process.env.BASES || process.argv[4] || '127.0.0.1:39000').split(
 require('..')({
   bases: BASES,
   host: HOST,
-  silent: false
+  silent: false,
 }).join({ name: NAME })
