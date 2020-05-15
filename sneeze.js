@@ -1,6 +1,6 @@
 /*
   MIT License,
-  Copyright (c) 2016-2018, Richard Rodger and other contributors.
+  Copyright (c) 2016-2020, Richard Rodger and other contributors.
 */
 
 'use strict'
@@ -9,7 +9,7 @@ var Events = require('events')
 var Util = require('util')
 
 var _ = require('lodash')
-var Swim = require('swim')
+var Swim = require('@voxgig/swim')
 var Optioner = require('optioner')
 var Keypress = require('keypress')
 var AE = require('ansi-escapes')
